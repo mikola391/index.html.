@@ -2,84 +2,103 @@
 <html lang="uk">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Наш фотоальбом</title>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Playfair+Display:ital,wght@0,500;1,400&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Фотоальбом</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Manrope:wght@600;800&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
 <style>
-:root{--pw:380px;--ph:520px;--paper:#f7f1e3;--ink:#33302b;--green:#2f4a3c;--gold:#c9a24b}
-*{box-sizing:border-box}
-body{margin:0;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;
-  background:radial-gradient(ellipse at 50% 40%,#3d5a4a,#1b2b23 75%);font-family:'Playfair Display',Georgia,serif}
-.stage{flex:none;width:calc(var(--pw)*2);height:var(--ph);perspective:2400px;transform:scale(var(--s,1));margin-top:-30px}
-.book{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.5,.1,.2,1)}
-.book.start{transform:translateX(-25%)}.book.end{transform:translateX(25%)}
-.leaf{position:absolute;left:50%;top:0;width:50%;height:100%;transform-origin:left center;transform-style:preserve-3d;
-  transition:transform .9s cubic-bezier(.5,.1,.2,1)}
-.leaf.flipped{transform:rotateY(-180deg)}
-.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--paper);
-  padding:26px 28px 34px;display:flex;flex-direction:column;gap:12px;overflow:hidden;color:var(--ink)}
-.face.front{border-radius:0 6px 6px 0;box-shadow:inset 14px 0 18px -12px rgba(0,0,0,.35)}
-.face.back{transform:rotateY(180deg);border-radius:6px 0 0 6px;box-shadow:inset -14px 0 18px -12px rgba(0,0,0,.35)}
-.num{position:absolute;bottom:10px;left:0;right:0;text-align:center;font:600 18px Caveat,cursive;color:#a89d86}
-.zone{position:absolute;top:0;bottom:0;width:48px;z-index:9999;border:0;background:none;cursor:pointer;color:#fff;font-size:34px;opacity:.35;transition:.2s}
-.zone:hover{opacity:1;background:linear-gradient(90deg,rgba(255,255,255,.15),transparent)}
-.zone.l{left:0}.zone.r{right:0;transform:scaleX(-1)}
+:root{--bg:#3a4363;--paper:#fbfafd;--ink:#2b2d42}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:#fff;font-family:'Manrope',system-ui,sans-serif;overflow:hidden}
+.app{height:100dvh;display:flex;flex-direction:column;align-items:center}
+header{width:100%;padding:22px 16px 0;text-align:center}
+#title{font-weight:800;font-size:20px;min-height:26px;outline:none}
+#title:empty::before{content:'Назва альбому';opacity:.5}
+#count{font-size:12px;font-weight:600;opacity:.75;margin-top:6px}
+main{flex:1;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
 
-/* обкладинка */
-.face.cover{background:var(--green);color:var(--gold);align-items:center;justify-content:center;text-align:center;gap:18px;
-  box-shadow:inset 0 0 0 10px var(--green),inset 0 0 0 12px var(--gold),inset 14px 0 18px -6px rgba(0,0,0,.5)}
-.cover .tt{font-size:36px;line-height:1.1;font-style:italic}
-.cover .sub{font:600 26px Caveat,cursive;flex:none;min-height:34px;color:#e6d5a4}
-.cover .slot{border-color:var(--gold);background:rgba(255,255,255,.06);color:var(--gold)}
+/* книжка */
+.stage{flex:none;width:600px;height:420px;perspective:1800px;transform:scale(var(--s,1));touch-action:pan-y}
+.book{position:relative;width:100%;height:100%;transform-style:preserve-3d;transform:rotateX(6deg);
+  transition:transform .8s cubic-bezier(.5,.1,.2,1)}
+.book.start{transform:translateX(-25%) rotateX(6deg)}
+.book.end{transform:translateX(25%) rotateX(6deg)}
+.shadow{position:absolute;left:10%;right:10%;bottom:-30px;height:36px;background:rgba(10,12,30,.4);filter:blur(16px);border-radius:50%}
+.leaf{position:absolute;left:50%;top:0;width:50%;height:100%;transform-origin:left center;transform-style:preserve-3d;
+  transition:transform .8s cubic-bezier(.5,.1,.2,1)}
+.leaf.flipped{transform:rotateY(-180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--paper);overflow:hidden;color:var(--ink)}
+.face.front{border-radius:0 10px 10px 0;box-shadow:inset 12px 0 14px -10px rgba(0,0,0,.3)}
+.face.back{transform:rotateY(180deg);border-radius:10px 0 0 10px;box-shadow:inset -12px 0 14px -10px rgba(0,0,0,.3)}
+.num{position:absolute;bottom:6px;left:0;right:0;text-align:center;font:600 11px Manrope;color:#aaa8b8}
 
 /* віконця для фото */
-.slot{position:relative;flex:none;display:grid;place-items:center;cursor:pointer;overflow:hidden;
-  border:2px dashed #c4b392;background:#efe5cc;color:#a08a66;font:600 22px Caveat,cursive;transition:background .2s}
-.slot:hover{background:#e8dcbc}
+.slot{position:absolute;display:grid;place-items:center;cursor:pointer;overflow:hidden;background:#efedf6;
+  border:2px dashed #c9c5da;color:#9a96b5;font:300 34px/1 Manrope;border-radius:4px}
 .slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.slot.has{border:6px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.28)}
+.slot.has{border:5px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.28)}
 .slot.has .lab{display:none}
-.slot .x{position:absolute;top:4px;right:4px;z-index:2;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;
-  display:none;place-items:center;font:18px/1 sans-serif}
+.slot .x{position:absolute;top:3px;right:3px;z-index:2;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.6);
+  color:#fff;display:none;place-items:center;font:16px/1 sans-serif}
 .slot.has:hover .x{display:grid}
-.arch{height:240px;border-radius:999px 999px 6px 6px}
-.circle{width:148px;height:148px;border-radius:50%}
-.pola{height:210px;transform:rotate(-2.5deg);width:92%;align-self:center;border-radius:3px}
-.row{display:flex;gap:10px;justify-content:center;flex:none}
+.slot.circle{border-radius:50%}
+.slot.full{border:0;border-radius:0 10px 10px 0;background:linear-gradient(160deg,#5b6296,#2f3556);color:#fff}
+.slot.full.has{border:0;box-shadow:none}
 
-/* текстові блоки */
-.tx{flex:1;min-height:30px;outline:none;font:400 23px/1.25 Caveat,cursive;white-space:pre-wrap;overflow:auto;padding:4px 6px;border-radius:6px}
-.tx:empty::before{content:attr(data-ph);color:#b9ab8f;pointer-events:none}
-.tx:focus{background:rgba(47,74,60,.07)}
-.tx.poem{font-family:'Playfair Display',serif;font-style:italic;font-size:17px;line-height:1.5;text-align:center}
-.tx.tt{flex:none;font:500 27px 'Playfair Display',serif;text-align:center}
-.tx.cap{flex:none;text-align:center;font-size:22px}
-.cover .tx{flex:none;color:var(--gold)}
-.cover .tx:empty::before{color:rgba(201,162,75,.55)}
+/* текст */
+.tx{position:absolute;outline:none;overflow:auto;scrollbar-width:none;white-space:pre-wrap;padding:2px 4px;border-radius:6px;
+  font:600 22px/1.15 Caveat,cursive;color:var(--ink)}
+.tx::-webkit-scrollbar{display:none}
+.tx:empty::before{content:attr(data-ph);color:#b4b0c8;pointer-events:none}
+.tx:focus{background:rgba(58,67,99,.08)}
+.tx.tt{font:800 22px/1.15 Manrope,sans-serif;text-align:center}
+.tx.poem{font:italic 400 15px/1.5 'Playfair Display',serif;text-align:center}
+.tx.hand{text-align:center}
+.tx.ctt{font:800 32px/1.1 Manrope,sans-serif;color:#fff;text-align:center;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.tx.cts{text-align:center;color:#fff;font-size:24px;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.tx.ctt:empty::before,.tx.cts:empty::before{color:rgba(255,255,255,.6)}
 
-/* панель керування */
-.bar{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:max-content;max-width:96vw}
-.bar button,.bar label{font:500 14px 'Playfair Display',serif;padding:8px 14px;border-radius:20px;border:1px solid #c9a24b;background:#23372d;color:#f1e4bd;cursor:pointer}
-.bar button:hover,.bar label:hover{background:#c9a24b;color:#1b2b23}
-:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+/* керування */
+.nav{display:flex;align-items:center;gap:14px;font-size:13px;font-weight:600;padding:4px 0 12px}
+.nv{width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.14);color:#fff;font-size:18px;cursor:pointer}
+.bar{display:flex;gap:14px;padding:4px 0 max(22px,env(safe-area-inset-bottom))}
+.rb{width:50px;height:50px;border-radius:50%;border:0;background:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.rb svg{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.menu{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:#fff;color:var(--ink);border-radius:16px;
+  padding:6px;display:none;flex-direction:column;min-width:220px;box-shadow:0 8px 30px rgba(0,0,0,.35);z-index:99}
+.menu.on{display:flex}
+.menu button,.menu label{padding:13px 14px;border:0;background:none;font:600 15px Manrope,sans-serif;text-align:left;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid #fff;outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.book,.leaf{transition-duration:.01s}}
 </style>
 </head>
 <body>
-<div class="stage" id="stage">
-  <div class="book start" id="book"></div>
-  <button class="zone l" id="prev" aria-label="Назад">❮</button>
-  <button class="zone r" id="next" aria-label="Вперед">❮</button>
+<div class="app">
+  <header>
+    <div id="title" contenteditable="true"></div>
+    <div id="count"></div>
+  </header>
+  <main>
+    <div class="stage" id="stage"><div class="book start" id="book"><div class="shadow"></div></div></div>
+  </main>
+  <div class="nav">
+    <button class="nv" id="prev" aria-label="Назад">‹</button>
+    <span id="pos"></span>
+    <button class="nv" id="next" aria-label="Вперед">›</button>
+  </div>
+  <div class="bar">
+    <button class="rb" id="more" aria-label="Меню"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></button>
+    <button class="rb" id="exp" aria-label="Зберегти у файл"><svg viewBox="0 0 24 24"><path d="M12 15V4M8 8l4-4 4 4M5 14v5h14v-5"/></svg></button>
+    <button class="rb" id="del" aria-label="Видалити розворот"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
+    <button class="rb" id="add" aria-label="Додати розворот"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+  </div>
 </div>
-<div class="bar">
-  <button id="add">Додати аркуш</button>
-  <button id="exp">Зберегти у файл</button>
-  <label>Відкрити файл<input type="file" id="imp" accept=".json" hidden></label>
+<div class="menu" id="menu">
+  <label>Відкрити збережений альбом<input type="file" id="imp" accept=".json" hidden></label>
   <button id="rst">Стерти все</button>
 </div>
 
 <script>
-const PW=380, PH=520, KEY='album-v1';
+const PW=300, KEY='album-v2';
 const $=s=>document.querySelector(s);
 const div=(c,p)=>{const e=document.createElement('div');e.className=c;p&&p.append(e);return e};
 let D, cur=0, leaves=[];
@@ -93,20 +112,20 @@ let tm; const saveLater=()=>{clearTimeout(tm);tm=setTimeout(save,400)};
 
 // стискаємо фото, щоб вони вмістились у сховище браузера
 const shrink=f=>new Promise(res=>{
-  const i=new Image();
+  const i=new Image(), u=URL.createObjectURL(f);
   i.onload=()=>{
     const k=Math.min(1,1000/Math.max(i.width,i.height)),c=document.createElement('canvas');
     c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);
     c.getContext('2d').drawImage(i,0,0,c.width,c.height);
-    res(c.toDataURL('image/jpeg',.82));
+    URL.revokeObjectURL(u);res(c.toDataURL('image/jpeg',.82));
   };
-  i.src=URL.createObjectURL(f);
+  i.src=u;
 });
 
-function slot(p,key,cls){
+function slotEl(p,key,cls){
   const s=div('slot '+cls,p), inp=document.createElement('input');
   inp.type='file';inp.accept='image/*';inp.hidden=true;
-  div('lab',s).textContent='＋ додати фото';
+  div('lab',s).textContent='+';
   const x=div('x',s);x.textContent='×';
   const paint=()=>{
     s.querySelector('img')?.remove();
@@ -118,88 +137,126 @@ function slot(p,key,cls){
     inp.click();
   };
   inp.onchange=()=>{const f=inp.files[0];if(f)shrink(f).then(u=>{D.d[key]=u;save();paint()});inp.value=''};
-  s.append(inp);paint();
+  s.append(inp);paint();return s;
 }
 
-function text(p,key,ph,cls=''){
+function textEl(p,key,ph,cls){
   const t=div('tx '+cls,p);
-  t.contentEditable=true;t.dataset.ph=ph;t.textContent=D.d[key]||'';
+  t.contentEditable=true;t.dataset.ph=ph||'';t.textContent=D.d[key]||'';
   t.oninput=()=>{D.d[key]=t.innerText;saveLater()};
   t.onpaste=e=>{e.preventDefault();document.execCommand('insertText',false,e.clipboardData.getData('text/plain'))};
+  return t;
 }
 
-// три макети сторінок, що чергуються
-const T=[
-  (f,k)=>{text(f,k+'h','Заголовок','tt');slot(f,k+'a','arch');text(f,k+'t','Вірш або спогад…','poem')},
-  (f,k)=>{text(f,k+'h','Заголовок','tt');const r=div('row',f);slot(r,k+'a','circle');slot(r,k+'b','circle');text(f,k+'t','Ваш текст…')},
-  (f,k)=>{text(f,k+'t','Вірш або думки…','poem');slot(f,k+'a','pola');text(f,k+'c','Підпис до фото','cap')}
+// макети: [тип, ключ, x%, y%, ширина%, висота%, поворот°, клас, підказка]
+const TPL=[
+ [['s','a',6,5,58,40,-3],['s','b',52,28,42,32,4],['s','c',8,52,40,34,3],['t','t',52,66,42,28,0,'hand','Підпис…']],
+ [['s','a',6,4,88,62,0],['t','h',8,69,84,8,0,'tt','Заголовок'],['t','t',8,79,84,17,0,'poem','Вірш…']],
+ [['t','h',10,6,80,9,0,'tt','Заголовок'],['t','t',10,17,80,50,0,'poem','Вірш або спогад…'],['s','a',32,70,36,25.7,0,'circle']],
+ [['s','a',8,6,60,38,-4],['s','b',32,46,60,38,3],['t','t',8,86,84,10,0,'hand','Підпис…']],
+ [['s','a',6,5,43,30],['s','b',51,5,43,30],['s','c',6,37,43,30],['s','d',51,37,43,30],['t','t',8,70,84,26,0,'hand','Ваші слова…']],
+ [['t','t',8,6,84,30,0,'poem','Вірш…'],['s','a',14,40,72,54,-2]]
 ];
+const COVER=[['s','a',0,0,100,100,0,'full'],['t','h',8,72,84,14,0,'ctt','Назва'],['t','t',8,88,84,8,0,'cts','Підпис або рік']];
 
-function fill(f,n,k){
-  if(n===0){
-    f.classList.add('cover');
-    text(f,'cvt','Назва альбому','tt');slot(f,'cva','circle');text(f,'cvs','Рік або присвята','sub');
-    return;
-  }
-  T[n%3](f,k);
-  div('num',f).textContent=n;
+function fillPage(f,p,idx){
+  (idx===0?COVER:TPL[p.t]).forEach(([ty,k,x,y,w,h,r,c,ph])=>{
+    const key=p.id+':'+k;
+    const el=ty==='s'?slotEl(f,key,c||''):textEl(f,key,ph,c||'');
+    Object.assign(el.style,{left:x+'%',top:y+'%',width:w+'%',height:h+'%',transform:'rotate('+r+'deg)'});
+  });
+  if(idx>0)div('num',f).textContent=idx;
 }
 
-function leaf(i){
-  const l=div('leaf');
-  ['front','back'].forEach((c,b)=>fill(div('face '+c,l),2*i+b,`l${i}${b}`));
-  return l;
-}
-
-function upd(){
-  const n=D.n;
-  leaves.forEach((l,i)=>{l.classList.toggle('flipped',i<cur);l.style.zIndex=i<cur?i:n-i});
-  $('#book').className='book'+(cur===0?' start':cur===n?' end':'');
-}
+function newPage(){const id=D.nid++;return{id,t:id%6}}
 
 function build(){
-  const b=$('#book');b.innerHTML='';
-  leaves=[...Array(D.n)].map((_,i)=>b.appendChild(leaf(i)));
+  const b=$('#book');
+  b.querySelectorAll('.leaf').forEach(e=>e.remove());
+  const L=D.pages.length/2;
+  leaves=[...Array(L)].map((_,i)=>{
+    const l=div('leaf',b);
+    ['front','back'].forEach((c,s)=>fillPage(div('face '+c,l),D.pages[2*i+s],2*i+s));
+    return l;
+  });
   upd();
 }
 
+function upd(){
+  const L=leaves.length;
+  leaves.forEach((l,i)=>{l.classList.toggle('flipped',i<cur);l.style.zIndex=i<cur?i:L-i});
+  $('#book').className='book'+(cur===0?' start':cur===L?' end':'');
+  $('#pos').textContent=cur===0?'Обкладинка':cur<L?(2*cur-1)+'–'+(2*cur)+' / '+(2*L-1):(2*L-1)+' / '+(2*L-1);
+  $('#count').textContent='Сторінок: '+(D.pages.length-1);
+}
+
 function go(d){
-  const j=d>0?cur:cur-1;
-  if(j<0||j>=D.n)return;
+  const L=leaves.length, j=d>0?cur:cur-1;
+  if(j<0||j>=L)return;
   cur+=d;upd();
-  leaves[j].style.zIndex=D.n+1;       // під час перегортання листок зверху
-  setTimeout(upd,900);
+  leaves[j].style.zIndex=L+1;           // під час перегортання листок зверху
+  setTimeout(upd,800);
 }
 
 function fit(){
-  const s=Math.min(1.25,(innerWidth-16)/(PW*2),(innerHeight-110)/PH);
-  $('#stage').style.setProperty('--s',s);
+  $('#stage').style.setProperty('--s',Math.min((innerWidth-12)/(PW*2),(innerHeight-230)/420,1.6));
 }
 
+// гортання свайпом
+const st=$('#stage');let sx=null;
+st.addEventListener('touchstart',e=>{sx=e.target.closest('.tx')?null:e.touches[0].clientX},{passive:true});
+st.addEventListener('touchend',e=>{
+  if(sx==null)return;
+  const d=e.changedTouches[0].clientX-sx;sx=null;
+  if(Math.abs(d)>40)go(d<0?1:-1);
+});
 $('#next').onclick=()=>go(1);
 $('#prev').onclick=()=>go(-1);
 addEventListener('keydown',e=>{
   if(e.target.isContentEditable)return;
-  if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1);
+  if(e.key==='ArrowRight')go(1);
+  if(e.key==='ArrowLeft')go(-1);
 });
 addEventListener('resize',fit);
 
-$('#add').onclick=()=>{D.n++;save();cur=D.n-1;build()};
+// кнопки
+$('#add').onclick=()=>{D.pages.push(newPage(),newPage());save();build();cur=leaves.length-1;upd()};
+$('#del').onclick=()=>{
+  const L=leaves.length;
+  if(cur===0)return alert('Обкладинку видалити не можна.');
+  if(L<2)return alert('Має лишитись хоча б один аркуш.');
+  if(!confirm('Видалити цей розворот разом з фото?'))return;
+  const a=cur<L?2*cur-1:2*L-2;
+  const gone=D.pages.splice(a,2).map(p=>p.id+':');
+  Object.keys(D.d).forEach(k=>{if(gone.some(g=>k.startsWith(g)))delete D.d[k]});
+  save();cur=Math.min(cur,D.pages.length/2);build();
+};
 $('#exp').onclick=()=>{
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([JSON.stringify(D)],{type:'application/json'}));
   a.download='album.json';a.click();
 };
+$('#more').onclick=e=>{e.stopPropagation();$('#menu').classList.toggle('on')};
+document.addEventListener('click',e=>{if(!e.target.closest('#menu'))$('#menu').classList.remove('on')});
 $('#imp').onchange=e=>{
   const f=e.target.files[0];
-  if(f)f.text().then(t=>{try{D=JSON.parse(t);save();cur=0;build()}catch(_){alert('Це не файл альбому.')}});
+  if(f)f.text().then(t=>{
+    try{const x=JSON.parse(t);if(!Array.isArray(x.pages))throw 0;D=x;save();cur=0;$('#title').textContent=D.title;build()}
+    catch(_){alert('Це не файл альбому.')}
+  });
+  $('#menu').classList.remove('on');
 };
 $('#rst').onclick=()=>{if(confirm('Стерти весь альбом?')){localStorage.removeItem(KEY);location.reload()}};
+$('#title').oninput=e=>{D.title=e.target.innerText;saveLater()};
 
 (async()=>{
   // якщо в браузері ще нічого немає — пробуємо підхопити album.json з репозиторію
   if(!D){try{const r=await fetch('album.json');if(r.ok)D=await r.json()}catch(e){}}
-  D=D||{n:4,d:{}};
+  if(!D||!Array.isArray(D.pages)){
+    D={nid:0,title:'Мій фотоальбом',pages:[],d:{}};
+    for(let i=0;i<8;i++)D.pages.push(newPage());
+  }
+  $('#title').textContent=D.title||'';
   fit();build();
 })();
 </script>
