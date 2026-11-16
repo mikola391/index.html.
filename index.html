@@ -46,7 +46,7 @@ main{flex:1;width:100%;display:flex;align-items:center;justify-content:center;ov
 .slot .x{position:absolute;top:3px;right:3px;z-index:2;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.6);
   color:#fff;display:none;place-items:center;font:16px/1 sans-serif}
 .slot.has:hover .x{display:grid}
-.slot.full{border:2px dashed rgba(255,255,255,.45);border-radius:8px;background:rgba(255,255,255,.08);color:#fff}
+.slot.full{z-index:1;border:2px dashed rgba(255,255,255,.45);border-radius:8px;background:rgba(255,255,255,.08);color:#fff}
 .slot.full.has{border:6px solid #fff;box-shadow:0 6px 20px rgba(0,0,0,.4)}
 
 /* текст */
@@ -54,6 +54,7 @@ main{flex:1;width:100%;display:flex;align-items:center;justify-content:center;ov
   font:600 22px/1.15 Caveat,cursive;color:var(--ink)}
 .tx::-webkit-scrollbar{display:none}
 .tx:empty::before{content:attr(data-ph);color:#b4b0c8;pointer-events:none}
+.tx{z-index:2;-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 .tx:focus{background:rgba(58,67,99,.08)}
 .tx.tt{font:800 22px/1.15 Manrope,sans-serif;text-align:center}
 .tx.poem{font:italic 400 15px/1.5 'Playfair Display',serif;text-align:center}
@@ -61,7 +62,8 @@ main{flex:1;width:100%;display:flex;align-items:center;justify-content:center;ov
 .tx.ctt{font:800 30px/1.1 Manrope,sans-serif;color:#fff;text-align:center}
 .tx.cts{text-align:center;color:#fff;font-size:24px;opacity:.9}
 .tx.ctt:empty::before,.tx.cts:empty::before{color:rgba(255,255,255,.55)}
-.tx.ctt:focus,.tx.cts:focus{background:rgba(255,255,255,.12)}
+.tx.ctt,.tx.cts{overflow:visible;z-index:5;min-height:38px;display:flex;align-items:center;justify-content:center;padding:4px 8px;background:none;border:0;caret-color:#fff}
+.tx.ctt:focus,.tx.cts:focus{background:none}
 
 /* керування */
 .nav{display:flex;align-items:center;gap:14px;font-size:13px;font-weight:600;padding:4px 0 12px}
@@ -74,6 +76,7 @@ main{flex:1;width:100%;display:flex;align-items:center;justify-content:center;ov
 .menu.on{display:flex}
 .menu button,.menu label{padding:13px 14px;border:0;background:none;font:600 15px Manrope,sans-serif;text-align:left;color:inherit;cursor:pointer}
 :focus-visible{outline:2px solid #fff;outline-offset:2px}
+.tx:focus-visible,#title:focus-visible,#sub:focus-visible{outline:none}
 @media (prefers-reduced-motion:reduce){.book,.leaf{transition-duration:.01s}}
 </style>
 </head>
@@ -165,7 +168,7 @@ const TPL=[
  [['s','a',6,4,42],['s','b',52,4,42],['s','c',6,36,42],['s','d',52,36,42],['t','t',8,70,84,26,0,'hand','Ваші слова…']],
  [['t','t',8,6,84,30,0,'poem','Вірш…'],['s','a',14,40,72,0,-2]]
 ];
-const COVER=[['s','a',8,8,84,0,0,'full'],['t','h',8,72,84,14,0,'ctt','Назва'],['t','t',8,88,84,8,0,'cts','Підпис або рік']];
+const COVER=[['s','a',8,8,84,0,0,'full'],['t','h',8,71,84,15,0,'ctt','Назва'],['t','t',8,87,84,10,0,'cts','Підпис або рік']];
 
 function fillPage(f,p,idx){
   (idx===0?COVER:TPL[p.t]).forEach(([ty,k,x,y,w,h,r,c,ph])=>{
