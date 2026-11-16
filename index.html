@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Наш фотоальбом</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Playfair+Display:ital,wght@0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--pw:380px;--ph:520px;--paper:#f7f1e3;--ink:#33302b;--green:#2f4a3c;--gold:#c9a24b}
+*{box-sizing:border-box}
+body{margin:0;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  background:radial-gradient(ellipse at 50% 40%,#3d5a4a,#1b2b23 75%);font-family:'Playfair Display',Georgia,serif}
+.stage{flex:none;width:calc(var(--pw)*2);height:var(--ph);perspective:2400px;transform:scale(var(--s,1));margin-top:-30px}
+.book{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.5,.1,.2,1)}
+.book.start{transform:translateX(-25%)}.book.end{transform:translateX(25%)}
+.leaf{position:absolute;left:50%;top:0;width:50%;height:100%;transform-origin:left center;transform-style:preserve-3d;
+  transition:transform .9s cubic-bezier(.5,.1,.2,1)}
+.leaf.flipped{transform:rotateY(-180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--paper);
+  padding:26px 28px 34px;display:flex;flex-direction:column;gap:12px;overflow:hidden;color:var(--ink)}
+.face.front{border-radius:0 6px 6px 0;box-shadow:inset 14px 0 18px -12px rgba(0,0,0,.35)}
+.face.back{transform:rotateY(180deg);border-radius:6px 0 0 6px;box-shadow:inset -14px 0 18px -12px rgba(0,0,0,.35)}
+.num{position:absolute;bottom:10px;left:0;right:0;text-align:center;font:600 18px Caveat,cursive;color:#a89d86}
+.zone{position:absolute;top:0;bottom:0;width:48px;z-index:9999;border:0;background:none;cursor:pointer;color:#fff;font-size:34px;opacity:.35;transition:.2s}
+.zone:hover{opacity:1;background:linear-gradient(90deg,rgba(255,255,255,.15),transparent)}
+.zone.l{left:0}.zone.r{right:0;transform:scaleX(-1)}
+
+/* обкладинка */
+.face.cover{background:var(--green);color:var(--gold);align-items:center;justify-content:center;text-align:center;gap:18px;
+  box-shadow:inset 0 0 0 10px var(--green),inset 0 0 0 12px var(--gold),inset 14px 0 18px -6px rgba(0,0,0,.5)}
+.cover .tt{font-size:36px;line-height:1.1;font-style:italic}
+.cover .sub{font:600 26px Caveat,cursive;flex:none;min-height:34px;color:#e6d5a4}
+.cover .slot{border-color:var(--gold);background:rgba(255,255,255,.06);color:var(--gold)}
+
+/* віконця для фото */
+.slot{position:relative;flex:none;display:grid;place-items:center;cursor:pointer;overflow:hidden;
+  border:2px dashed #c4b392;background:#efe5cc;color:#a08a66;font:600 22px Caveat,cursive;transition:background .2s}
+.slot:hover{background:#e8dcbc}
+.slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.slot.has{border:6px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.28)}
+.slot.has .lab{display:none}
+.slot .x{position:absolute;top:4px;right:4px;z-index:2;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;
+  display:none;place-items:center;font:18px/1 sans-serif}
+.slot.has:hover .x{display:grid}
+.arch{height:240px;border-radius:999px 999px 6px 6px}
+.circle{width:148px;height:148px;border-radius:50%}
+.pola{height:210px;transform:rotate(-2.5deg);width:92%;align-self:center;border-radius:3px}
+.row{display:flex;gap:10px;justify-content:center;flex:none}
+
+/* текстові блоки */
+.tx{flex:1;min-height:30px;outline:none;font:400 23px/1.25 Caveat,cursive;white-space:pre-wrap;overflow:auto;padding:4px 6px;border-radius:6px}
+.tx:empty::before{content:attr(data-ph);color:#b9ab8f;pointer-events:none}
+.tx:focus{background:rgba(47,74,60,.07)}
+.tx.poem{font-family:'Playfair Display',serif;font-style:italic;font-size:17px;line-height:1.5;text-align:center}
+.tx.tt{flex:none;font:500 27px 'Playfair Display',serif;text-align:center}
+.tx.cap{flex:none;text-align:center;font-size:22px}
+.cover .tx{flex:none;color:var(--gold)}
+.cover .tx:empty::before{color:rgba(201,162,75,.55)}
+
+/* панель керування */
+.bar{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:max-content;max-width:96vw}
+.bar button,.bar label{font:500 14px 'Playfair Display',serif;padding:8px 14px;border-radius:20px;border:1px solid #c9a24b;background:#23372d;color:#f1e4bd;cursor:pointer}
+.bar button:hover,.bar label:hover{background:#c9a24b;color:#1b2b23}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.book,.leaf{transition-duration:.01s}}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="book start" id="book"></div>
+  <button class="zone l" id="prev" aria-label="Назад">❮</button>
+  <button class="zone r" id="next" aria-label="Вперед">❮</button>
+</div>
+<div class="bar">
+  <button id="add">Додати аркуш</button>
+  <button id="exp">Зберегти у файл</button>
+  <label>Відкрити файл<input type="file" id="imp" accept=".json" hidden></label>
+  <button id="rst">Стерти все</button>
+</div>
+
+<script>
+const PW=380, PH=520, KEY='album-v1';
+const $=s=>document.querySelector(s);
+const div=(c,p)=>{const e=document.createElement('div');e.className=c;p&&p.append(e);return e};
+let D, cur=0, leaves=[];
+try{D=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify(D))}
+  catch(e){alert('У браузері закінчилось місце. Збережіть альбом у файл і додавайте менші фото.')}
+}
+let tm; const saveLater=()=>{clearTimeout(tm);tm=setTimeout(save,400)};
+
+// стискаємо фото, щоб вони вмістились у сховище браузера
+const shrink=f=>new Promise(res=>{
+  const i=new Image();
+  i.onload=()=>{
+    const k=Math.min(1,1000/Math.max(i.width,i.height)),c=document.createElement('canvas');
+    c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);
+    c.getContext('2d').drawImage(i,0,0,c.width,c.height);
+    res(c.toDataURL('image/jpeg',.82));
+  };
+  i.src=URL.createObjectURL(f);
+});
+
+function slot(p,key,cls){
+  const s=div('slot '+cls,p), inp=document.createElement('input');
+  inp.type='file';inp.accept='image/*';inp.hidden=true;
+  div('lab',s).textContent='＋ додати фото';
+  const x=div('x',s);x.textContent='×';
+  const paint=()=>{
+    s.querySelector('img')?.remove();
+    const v=D.d[key];s.classList.toggle('has',!!v);
+    if(v){const i=new Image();i.src=v;i.alt='';s.prepend(i)}
+  };
+  s.onclick=e=>{
+    if(e.target===x){delete D.d[key];save();paint();return}
+    inp.click();
+  };
+  inp.onchange=()=>{const f=inp.files[0];if(f)shrink(f).then(u=>{D.d[key]=u;save();paint()});inp.value=''};
+  s.append(inp);paint();
+}
+
+function text(p,key,ph,cls=''){
+  const t=div('tx '+cls,p);
+  t.contentEditable=true;t.dataset.ph=ph;t.textContent=D.d[key]||'';
+  t.oninput=()=>{D.d[key]=t.innerText;saveLater()};
+  t.onpaste=e=>{e.preventDefault();document.execCommand('insertText',false,e.clipboardData.getData('text/plain'))};
+}
+
+// три макети сторінок, що чергуються
+const T=[
+  (f,k)=>{text(f,k+'h','Заголовок','tt');slot(f,k+'a','arch');text(f,k+'t','Вірш або спогад…','poem')},
+  (f,k)=>{text(f,k+'h','Заголовок','tt');const r=div('row',f);slot(r,k+'a','circle');slot(r,k+'b','circle');text(f,k+'t','Ваш текст…')},
+  (f,k)=>{text(f,k+'t','Вірш або думки…','poem');slot(f,k+'a','pola');text(f,k+'c','Підпис до фото','cap')}
+];
+
+function fill(f,n,k){
+  if(n===0){
+    f.classList.add('cover');
+    text(f,'cvt','Назва альбому','tt');slot(f,'cva','circle');text(f,'cvs','Рік або присвята','sub');
+    return;
+  }
+  T[n%3](f,k);
+  div('num',f).textContent=n;
+}
+
+function leaf(i){
+  const l=div('leaf');
+  ['front','back'].forEach((c,b)=>fill(div('face '+c,l),2*i+b,`l${i}${b}`));
+  return l;
+}
+
+function upd(){
+  const n=D.n;
+  leaves.forEach((l,i)=>{l.classList.toggle('flipped',i<cur);l.style.zIndex=i<cur?i:n-i});
+  $('#book').className='book'+(cur===0?' start':cur===n?' end':'');
+}
+
+function build(){
+  const b=$('#book');b.innerHTML='';
+  leaves=[...Array(D.n)].map((_,i)=>b.appendChild(leaf(i)));
+  upd();
+}
+
+function go(d){
+  const j=d>0?cur:cur-1;
+  if(j<0||j>=D.n)return;
+  cur+=d;upd();
+  leaves[j].style.zIndex=D.n+1;       // під час перегортання листок зверху
+  setTimeout(upd,900);
+}
+
+function fit(){
+  const s=Math.min(1.25,(innerWidth-16)/(PW*2),(innerHeight-110)/PH);
+  $('#stage').style.setProperty('--s',s);
+}
+
+$('#next').onclick=()=>go(1);
+$('#prev').onclick=()=>go(-1);
+addEventListener('keydown',e=>{
+  if(e.target.isContentEditable)return;
+  if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1);
+});
+addEventListener('resize',fit);
+
+$('#add').onclick=()=>{D.n++;save();cur=D.n-1;build()};
+$('#exp').onclick=()=>{
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(D)],{type:'application/json'}));
+  a.download='album.json';a.click();
+};
+$('#imp').onchange=e=>{
+  const f=e.target.files[0];
+  if(f)f.text().then(t=>{try{D=JSON.parse(t);save();cur=0;build()}catch(_){alert('Це не файл альбому.')}});
+};
+$('#rst').onclick=()=>{if(confirm('Стерти весь альбом?')){localStorage.removeItem(KEY);location.reload()}};
+
+(async()=>{
+  // якщо в браузері ще нічого немає — пробуємо підхопити album.json з репозиторію
+  if(!D){try{const r=await fetch('album.json');if(r.ok)D=await r.json()}catch(e){}}
+  D=D||{n:4,d:{}};
+  fit();build();
+})();
+</script>
+</body>
+</html>
